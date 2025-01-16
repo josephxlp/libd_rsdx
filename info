@@ -5,9 +5,14 @@
 fdownscale steps:
 - version mvp [x]
 - convert all the sdat files into geotifs if aux [-]
+- remove all the other files 
 - quality and residual function 
   - compare it with the one here 
   - viz maps 
+
+- add downscale with multi-variabales 
+- compile and publish version 1 of the packages
+- readme and tutorials with examples for egm,temp,dem downscaling by dem, img
 
 
 ml-fastdownscale: find that if model exisit resulse if not train and predict 

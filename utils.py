@@ -89,4 +89,112 @@ def gwr_grid_downscaling(xpath, ypath, opath, oaux=False,epsg_code=4979):
     print("GWR Grid Downscaling completed.")
     if oaux:
         print(f"Additional outputs saved: \n{opath_rescorr}, \n{opath_quality}, \n{opath_residuals}")
+
+import numpy as np
+import rasterio
+
+def read_raster(raster_path):
+    """
+    Reads a raster file and returns the data array and profile.
+    Args:
+        raster_path (str): Path to the raster file.
+    Returns:
+        tuple: A tuple containing the raster data array and the metadata profile.
+    """
+    with rasterio.open(raster_path) as src:
+        data = src.read(1)
+        profile = src.profile
+    return data, profile
+
+def mask_nodata(data, nodata_value):
+    # should include high and low values 
+    """
+    Masks out the nodata values in the raster data.
+    Args:
+        data (numpy.ndarray): The raster data.
+        nodata_value (float): The nodata value to be masked.
+    Returns:
+        numpy.ndarray: The masked data array.
+    """
+    return np.where(data == nodata_value, np.nan, data)
+
+def calculate_r_squared(observed, predicted):
+    """
+    Calculates the Coefficient of Determination (R²) between observed and predicted values.
+    Args:
+        observed (numpy.ndarray): The observed values.
+        predicted (numpy.ndarray): The predicted values.
+    Returns:
+        float: The R² value.
+    """
+    ss_total = np.sum((observed - np.mean(observed)) ** 2)
+    ss_residual = np.sum((observed - predicted) ** 2)
+    return 1 - (ss_residual / ss_total)
+
+def calculate_residuals(observed, predicted):
+    """
+    Calculates residuals (observed - predicted) for each grid cell.
+    Args:
+        observed (numpy.ndarray): The observed values.
+        predicted (numpy.ndarray): The predicted values.
+    Returns:
+        numpy.ndarray: The residuals for each cell.
+    """
+    return observed - predicted
+
+def write_raster(output_path, data, profile):
+    """
+    Writes the processed data to a new raster file.
+    Args:
+        output_path (str): The path where the output raster will be saved.
+        data (numpy.ndarray): The data to be written to the raster.
+        profile (dict): The metadata profile for the raster.
+    """
+    profile.update(dtype=rasterio.float32)
+    with rasterio.open(output_path, 'w', **profile) as dst:
+        dst.write(data.astype(rasterio.float32), 1)
+
+def process_rasters(pred_raster_path, obs_raster_path, output_r_squared_path, output_residuals_path):
+    """
+    Processes prediction and observation rasters to compute R² and residuals.
+    Args:
+        pred_raster_path (str): Path to the prediction raster file.
+        obs_raster_path (str): Path to the observation raster file.
+        output_r_squared_path (str): Path to save the R² output raster.
+        output_residuals_path (str): Path to save the residuals output raster.
+    """
+    # Read input rasters
+    pred, pred_profile = read_raster(pred_raster_path)
+    obs, obs_profile = read_raster(obs_raster_path)
+
+    # Mask nodata values
+    nodata = pred_profile.get('nodata', np.nan)
+    pred = mask_nodata(pred, nodata)
+    obs = mask_nodata(obs, nodata)
+
+    # Initialize output arrays
+    r_squared_grid = np.empty_like(pred)
+    residuals_grid = np.empty_like(pred)
+
+    # Loop through grid cells
+    for i in range(pred.shape[0]):
+        for j in range(pred.shape[1]):
+            observed_value = obs[i, j]
+            predicted_value = pred[i, j]
+            if np.isnan(observed_value) or np.isnan(predicted_value):
+                r_squared_grid[i, j] = np.nan
+                residuals_grid[i, j] = np.nan
+            else:
+                # Calculate R² and residuals for each cell
+                r_squared_grid[i, j] = calculate_r_squared(np.array([observed_value]), np.array([predicted_value]))
+                residuals_grid[i, j] = calculate_residuals(observed_value, predicted_value)
+
+    # Write output rasters
+    write_raster(output_r_squared_path, r_squared_grid, pred_profile)
+    write_raster(output_residuals_path, residuals_grid, pred_profile)
+
+    print(f"R² and Residuals grids have been saved as '{output_r_squared_path}' and '{output_residuals_path}'.")
+
+
+
         
