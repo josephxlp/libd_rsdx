@@ -88,5 +88,5 @@ def gwr_grid_downscaling(xpath, ypath, opath, oaux=False,epsg_code=4979):
 
     print("GWR Grid Downscaling completed.")
     if oaux:
-        print(f"Additional outputs saved: {opath_rescorr}, {opath_quality}, {opath_residuals}")
+        print(f"Additional outputs saved: \n{opath_rescorr}, \n{opath_quality}, \n{opath_residuals}")
         
