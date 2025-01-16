@@ -1,0 +1,13 @@
+[x] finished 
+[-] not started 
+[+] ongoing 
+
+fdownscale steps:
+- version mvp [x]
+- convert all the sdat files into geotifs if aux [-]
+- quality and residual function 
+  - compare it with the one here 
+  - viz maps 
+
+
+ml-fastdownscale: find that if model exisit resulse if not train and predict 
