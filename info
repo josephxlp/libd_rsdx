@@ -15,4 +15,8 @@ fdownscale steps:
 - readme and tutorials with examples for egm,temp,dem downscaling by dem, img
 
 
+application 
+- gedi grided downscaled both variables [x]
+- error analysis 
+
 ml-fastdownscale: find that if model exisit resulse if not train and predict 
