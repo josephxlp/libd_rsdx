@@ -1,11 +1,20 @@
+# compare this method with pband and lidar ::  tonlesap and rio-negro :: estonia 
+# the error paper only where bare ground 
+
 [x] finished 
 [-] not started 
 [+] ongoing 
 
 fdownscale steps:
 - version mvp [x]
+- rename the files correctly [x]
 - convert all the sdat files into geotifs if aux [-]
 - remove all the other files 
+- run by grid size:
+  - 90 [x]
+  - 30 [+]
+  - 12 [+]
+  - 12 tdemx []
 - quality and residual function 
   - compare it with the one here 
   - viz maps 

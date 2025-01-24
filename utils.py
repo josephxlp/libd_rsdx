@@ -1,4 +1,43 @@
 import os 
+import time
+from pprint import pprint
+
+def print_context(text):
+    print(' ')
+    """
+    Prints the given text in a styled format, mimicking SAGA GIS console output.
+
+    Parameters:
+        text (str): The text to print.
+    """
+    # Border symbols
+    border_char = "=" * 60
+    padding_char = " " * 4
+
+    # Print formatted text
+    print(border_char)
+    print(f"{padding_char}ML - Process Log")
+    print(border_char)
+
+    for line in text.split("\n"):
+        print(f"{padding_char}{line}")
+
+    print(border_char)
+
+    
+
+def select_base_file(tile_hfiles):
+    bfile = [i for i in tile_hfiles if 'edem_W84' in i]
+    pprint(bfile)
+    assert len(bfile) == 1, 'More than 1 file were selected'
+    return bfile[0]
+
+def select_filled_file(files, var,meth):
+    varpath = [i for i in files if var in i and meth in i]
+    pprint(varpath)
+    assert len(varpath) == 1, 'More than 1 file were selected'
+    return varpath[0]
+
 
 # def sdat_to_geotif(sdat_path, gtif_path, epsg_code=4979):
 #     #if os.path.isfile(sdat_path):
@@ -39,7 +78,7 @@ def sdat_to_geotif(sdat_path, gtif_path, epsg_code=4979):
 
 
 
-def gwr_grid_downscaling(xpath, ypath, opath, oaux=False,epsg_code=4979):
+def gwr_grid_downscaling(xpath, ypath, opath, oaux=False,epsg_code=4979, clean=True):
     """
     Perform Geographically Weighted Regression (GWR) for grid downscaling.
     
@@ -89,6 +128,18 @@ def gwr_grid_downscaling(xpath, ypath, opath, oaux=False,epsg_code=4979):
     print("GWR Grid Downscaling completed.")
     if oaux:
         print(f"Additional outputs saved: \n{opath_rescorr}, \n{opath_quality}, \n{opath_residuals}")
+
+    if clean:
+        time.sleep(1)
+        
+        dirpath = os.path.dirname(opath)
+        print(f'Cleaning up intermediate files...\n{dirpath}')
+        for f in os.listdir(dirpath):
+            if not f.endswith('.tif'):
+                fo = os.path.join(dirpath, f)
+                print(f'Removing {fo}...')
+                os.remove(fo)
+
 
 import numpy as np
 import rasterio
