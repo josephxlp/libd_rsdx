@@ -42,7 +42,7 @@ def tile_gwr_grid_downscaling(tilename, gedi_grid_dpath, base_files_dpathx, X):
 
 
 tilenames = sorted(os.listdir(gedi_grid_dpath), reverse=True)
-XGRID_LIST = [90,30,12]
+XGRID_LIST = [90,30,12]# trying this out 
 if __name__ == '__main__':
    
     ti = time.perf_counter()
