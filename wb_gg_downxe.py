@@ -25,10 +25,13 @@ def select_hfile(tile_hfiles,X, name='tdem_DEM'):
 
 tilenames = sorted(os.listdir(gedi_grid_dpath), reverse=True)
 
+# this fucntions to be corrected to transform into the loop 
 # if the tif exists, skipp []
 meth= 'riofill_si0.tif'#'riofill_si0.tif'#'riofill'
-bname = 'tdem_W84'#options tdem_W84 and edem_W84
-X = 90 #90:5mins #30: 
+bname = 'edem_W84'#options tdem_W84 and edem_W84
+#tdem_W84##90:5mins #30:33mins #12:88mins
+#edem_W84##12:
+X = 12 
 base_files_dpath = base_files_dpathx + str(X)
 
 if __name__ == '__main__':
